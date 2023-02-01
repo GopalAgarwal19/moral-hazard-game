@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect
 import random
 from pymongo import MongoClient
 
+from decouple import config
 app = Flask(__name__)
 
 
@@ -166,9 +167,7 @@ def s2_game():
 def thank():
     global details
 
-    client = MongoClient(
-        "mongodb+srv://gopal:gopal%40123@cluster0.2hulrxt.mongodb.net/HDBLookUp?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE"
-    )
+    client = MongoClient(config('MONGODB_URI'))
     db = client["HE3604"]
     db["Tut 3"].insert_many(
         [
