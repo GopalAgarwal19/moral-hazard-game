@@ -47,7 +47,7 @@ def home():
         details["course"] = request.form["course"]
         print(details)
         return redirect("/s1_ins")
-    return render_template("home.html")
+    return render_template("index.html")
 
 
 @app.route("/s1_ins", methods=["GET", "POST"])
