@@ -1,11 +1,9 @@
 from flask import Flask, render_template, request, redirect
 import random
-from pymongo import MongoClient
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 import string
-from decouple import config
 app = Flask(__name__)
 
 
