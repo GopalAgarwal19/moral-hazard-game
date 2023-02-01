@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect
 import random
 from pymongo import MongoClient
-
+import logging
 from decouple import config
 app = Flask(__name__)
 
@@ -166,35 +166,43 @@ def s2_game():
 @app.route("/thank", methods=["GET", "POST"])
 def thank():
     global details
-
-    client = MongoClient(config('MONGODB_URI'))
-    db = client["HE3604"]
-    db["Tut 3"].insert_many(
-        [
-            {
-                "Age": details["age"],
-                "Gender": details["gender"],
-                "Year": details["year"],
-                "Course": details["course"],
-                "S1 diseases": [
-                    alloted_diseases_s1[i]
-                    for i in range(len(alloted_diseases_s1))
-                    if i % 2 == 0
-                ],
-                "S1 options": options_selected_s1,
-                "S1 checkups": checkups_s1,
-                "S1 final CEV": cev_s1,
-                "S2 diseases": [
-                    alloted_diseases_s2[i]
-                    for i in range(len(alloted_diseases_s2))
-                    if i % 2 == 0
-                ],
-                "S2 options": options_selected_s2,
-                "S2 checkups": checkups_s2,
-                "S2 final CEV": cev_s2,
-            }
-        ]
-    )
+    # client = MongoClient(
+    #     "mongodb+srv://gopal:gopal%40123@cluster0.2hulrxt.mongodb.net/HDBLookUp?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE"
+    # )
+    try:
+        client = MongoClient(config('MONGODB_URI'))
+        db = client["HE3604"]
+        # return render_template("thank.html")
+        db["Tut 3"].insert_many(
+            [
+                {
+                    "Age": details["age"],
+                    "Gender": details["gender"],
+                    "Year": details["year"],
+                    "Course": details["course"],
+                    "S1 diseases": [
+                        alloted_diseases_s1[i]
+                        for i in range(len(alloted_diseases_s1))
+                        if i % 2 == 0
+                    ],
+                    "S1 options": options_selected_s1,
+                    "S1 checkups": checkups_s1,
+                    "S1 final CEV": cev_s1,
+                    "S2 diseases": [
+                        alloted_diseases_s2[i]
+                        for i in range(len(alloted_diseases_s2))
+                        if i % 2 == 0
+                    ],
+                    "S2 options": options_selected_s2,
+                    "S2 checkups": checkups_s2,
+                    "S2 final CEV": cev_s2,
+                }
+            ]
+        )
+    except:
+        logging.log("error")
+        logging.log(client)
+        logging.log(details)
 
     return render_template("thank.html")
 
