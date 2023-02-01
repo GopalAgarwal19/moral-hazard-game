@@ -200,9 +200,9 @@ def thank():
             ]
         )
     except:
-        logging.log("error")
-        logging.log(client)
-        logging.log(details)
+        logging.debug("error")
+        logging.debug(client)
+        logging.debug(details)
 
     return render_template("thank.html")
 
