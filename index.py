@@ -40,14 +40,48 @@ details = {}
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-    global details
-    if request.method == "POST":
-        details["age"] = request.form["age"]
-        details["gender"] = request.form["gender"]
-        details["year"] = request.form["year"]
-        details["course"] = request.form["course"]
-        print(details)
-        return redirect("/s1_ins")
+    
+    # client = MongoClient(config('MONGODB_URI'))
+    client = MongoClient("mongodb+srv://gopal:gopal%40123@cluster0.2hulrxt.mongodb.net/HDBLookUp?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE")   
+    db = client["HE3604"]
+    # return render_template("thank.html")
+    print("here 1")
+    db["Tut 3"].insert_many(
+        [
+            {"debug":1}
+            # {
+            #     "Age": details["age"],
+            #     "Gender": details["gender"],
+            #     "Year": details["year"],
+            #     "Course": details["course"],
+            #     "S1 diseases": [
+            #         alloted_diseases_s1[i]
+            #         for i in range(len(alloted_diseases_s1))
+            #         if i % 2 == 0
+            #     ],
+            #     "S1 options": options_selected_s1,
+            #     "S1 checkups": checkups_s1,
+            #     "S1 final CEV": cev_s1,
+            #     "S2 diseases": [
+            #         alloted_diseases_s2[i]
+            #         for i in range(len(alloted_diseases_s2))
+            #         if i % 2 == 0
+            #     ],
+            #     "S2 options": options_selected_s2,
+            #     "S2 checkups": checkups_s2,
+            #     "S2 final CEV": cev_s2,
+            # }
+        ]
+    )
+  
+    # global details
+    # if request.method == "POST":
+    #     details["age"] = request.form["age"]
+    #     details["gender"] = request.form["gender"]
+    #     details["year"] = request.form["year"]
+    #     details["course"] = request.form["course"]
+    #     print(details)
+    #     return redirect("/s1_ins")
     return render_template("index.html")
 
 
@@ -200,9 +234,7 @@ def thank():
             ]
         )
     except:
-        logging.debug("error")
-        logging.debug(client)
-        logging.debug(details)
+        pass
 
     return render_template("thank.html")
 
