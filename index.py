@@ -1,7 +1,10 @@
 from flask import Flask, render_template, request, redirect
 import random
 from pymongo import MongoClient
-import logging
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+import string
 from decouple import config
 app = Flask(__name__)
 
@@ -40,48 +43,14 @@ details = {}
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-    
-    # client = MongoClient(config('MONGODB_URI'))
-    client = MongoClient("mongodb+srv://gopal:gopal%40123@cluster0.2hulrxt.mongodb.net/HDBLookUp?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE")   
-    db = client["HE3604"]
-    # return render_template("thank.html")
-    print("here 1")
-    db["Tut 3"].insert_many(
-        [
-            {"debug":1}
-            # {
-            #     "Age": details["age"],
-            #     "Gender": details["gender"],
-            #     "Year": details["year"],
-            #     "Course": details["course"],
-            #     "S1 diseases": [
-            #         alloted_diseases_s1[i]
-            #         for i in range(len(alloted_diseases_s1))
-            #         if i % 2 == 0
-            #     ],
-            #     "S1 options": options_selected_s1,
-            #     "S1 checkups": checkups_s1,
-            #     "S1 final CEV": cev_s1,
-            #     "S2 diseases": [
-            #         alloted_diseases_s2[i]
-            #         for i in range(len(alloted_diseases_s2))
-            #         if i % 2 == 0
-            #     ],
-            #     "S2 options": options_selected_s2,
-            #     "S2 checkups": checkups_s2,
-            #     "S2 final CEV": cev_s2,
-            # }
-        ]
-    )
-  
-    # global details
-    # if request.method == "POST":
-    #     details["age"] = request.form["age"]
-    #     details["gender"] = request.form["gender"]
-    #     details["year"] = request.form["year"]
-    #     details["course"] = request.form["course"]
-    #     print(details)
-    #     return redirect("/s1_ins")
+    global details
+    if request.method == "POST":
+        details["age"] = request.form["age"]
+        details["gender"] = request.form["gender"]
+        details["year"] = request.form["year"]
+        details["course"] = request.form["course"]
+        print(details)
+        return redirect("/s1_ins")
     return render_template("index.html")
 
 
@@ -200,43 +169,66 @@ def s2_game():
 @app.route("/thank", methods=["GET", "POST"])
 def thank():
     global details
+    cred = credentials.Certificate('moral-hazard-game-firebase-adminsdk-1g1hk-0a4993c229.json')
+    firebase_admin.initialize_app(cred)
+    db = firestore.client()
+    doc_ref = db.collection("tutorial").document(''.join(random.choices(string.ascii_letters, k=15)))
+    doc_ref.set({
+        "Age": details["age"],
+                "Gender": details["gender"],
+                "Year": details["year"],
+                "Course": details["course"],
+                "S1 diseases": [
+                    alloted_diseases_s1[i]
+                    for i in range(len(alloted_diseases_s1))
+                    if i % 2 == 0
+                ],
+                "S1 options": options_selected_s1,
+                "S1 checkups": checkups_s1,
+                "S1 final CEV": cev_s1,
+                "S2 diseases": [
+                    alloted_diseases_s2[i]
+                    for i in range(len(alloted_diseases_s2))
+                    if i % 2 == 0
+                ],
+                "S2 options": options_selected_s2,
+                "S2 checkups": checkups_s2,
+                "S2 final CEV": cev_s2,
+    })
     # client = MongoClient(
     #     "mongodb+srv://gopal:gopal%40123@cluster0.2hulrxt.mongodb.net/HDBLookUp?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE"
     # )
-    try:
-        client = MongoClient(config('MONGODB_URI'))
-        db = client["HE3604"]
-        # return render_template("thank.html")
-        db["Tut 3"].insert_many(
-            [
-                {
-                    "Age": details["age"],
-                    "Gender": details["gender"],
-                    "Year": details["year"],
-                    "Course": details["course"],
-                    "S1 diseases": [
-                        alloted_diseases_s1[i]
-                        for i in range(len(alloted_diseases_s1))
-                        if i % 2 == 0
-                    ],
-                    "S1 options": options_selected_s1,
-                    "S1 checkups": checkups_s1,
-                    "S1 final CEV": cev_s1,
-                    "S2 diseases": [
-                        alloted_diseases_s2[i]
-                        for i in range(len(alloted_diseases_s2))
-                        if i % 2 == 0
-                    ],
-                    "S2 options": options_selected_s2,
-                    "S2 checkups": checkups_s2,
-                    "S2 final CEV": cev_s2,
-                }
-            ]
-        )
-    except:
-        pass
+    # client = MongoClient(config('MONGODB_URI'))
+    # db = client["HE3604"]
+    # return render_template("thank.html")
+    # db["Tut 3"].insert_many(
+    #     [
+    #         {
+    #             "Age": details["age"],
+    #             "Gender": details["gender"],
+    #             "Year": details["year"],
+    #             "Course": details["course"],
+    #             "S1 diseases": [
+    #                 alloted_diseases_s1[i]
+    #                 for i in range(len(alloted_diseases_s1))
+    #                 if i % 2 == 0
+    #             ],
+    #             "S1 options": options_selected_s1,
+    #             "S1 checkups": checkups_s1,
+    #             "S1 final CEV": cev_s1,
+    #             "S2 diseases": [
+    #                 alloted_diseases_s2[i]
+    #                 for i in range(len(alloted_diseases_s2))
+    #                 if i % 2 == 0
+    #             ],
+    #             "S2 options": options_selected_s2,
+    #             "S2 checkups": checkups_s2,
+    #             "S2 final CEV": cev_s2,
+    #         }
+    #     ]
+    # )
 
-    return render_template("thank.html")
+    return render_template("thank.html", details = details)
 
 
 # if __name__ == "__main__":
