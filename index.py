@@ -144,7 +144,7 @@ def s2_game():
             deductible = 75
         else:
             quarter_s2 += 1
-
+    
         if year_s2 == 2:
             return redirect("/thank")
         return redirect("/s2_game")
