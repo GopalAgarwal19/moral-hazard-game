@@ -87,7 +87,7 @@ def s1_game():
         else:
             quarter_s1 += 1
 
-        if year_s1 == 2:
+        if year_s1 == 4:
             return redirect("/s2_ins")
 
         return redirect("/s1_game")
@@ -147,7 +147,7 @@ def s2_game():
         else:
             quarter_s2 += 1
     
-        if year_s2 == 2:
+        if year_s2 == 4:
             return redirect("/thank")
         return redirect("/s2_game")
 
