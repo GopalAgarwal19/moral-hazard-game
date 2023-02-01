@@ -226,7 +226,7 @@ def thank():
     #     ]
     # )
 
-    return render_template("thank.html", details = details)
+    return render_template("thank.html")
 
 
 # if __name__ == "__main__":
