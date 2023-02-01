@@ -1,0 +1,46 @@
+<style>
+    .content {
+        max-width: 500px;
+        margin: auto;
+    }
+</style>
+
+<body>
+
+    <div class="content">
+        <h1 style='text-align: center;'>Scenario 1: Choose your action</h1>
+        <h3 style='text-align: center;'>Time: Year {{ year }} Quarter {{ quarter }}</h3>
+        <h3 style='text-align: center;'>Your current Cummulative Economic Value (CEV) is ${{ cev }}</h3>
+        <h2 style='text-align: center; color: red;'>You have been diagnosed with Disease {{ random_disease }}</h2>
+        <form method="post">
+            <h3>Choose one of the following options:</h3>
+            <input type="radio" id="coi" name="options" value={{ coi }} required>
+            <label for="coi">
+                <h4 style=' color: green; display: inline;'>Do not seek care. <br> Cost of Illness is ${{ coi }}. <br> Economic Value of this decision is ${{ coi }}
+                </h4>
+            </label><br><br>
+            <input type="radio" id="coc" name="options" value={{ coh + 10*time }} required>
+            <label for="coc">
+                <h4 style=' color: green; display: inline;'>Seek healthcare. <br> Cost of Care is ${{ coh }} and Cost of Time is ${{10 * time}}. <br> Economic Value of
+                    this decision is ${{ coh + 10*time }}</h4>
+            </label>
+        
+            {% if quarter == 2 %}
+            <br><br>
+            <h2 style='text-align: center; color: red;'>Would you like an annual physical checkup?</h2>
+            <h3>Choose one of the following options:</h3>
+            <input type="radio" id="yes" name="checkup" value=120 required>
+            <label for="yes"></label>
+            <h4 style=' color: green; display: inline;'>Yes <br> Economic Value of this decision is $120</h4></label><br><br>
+            <input type="radio" id="no" name="checkup" value=0 required>
+            <label for="no"></label>
+            <h4 style=' color: green; display: inline;'>No <br> Economic Value of this decision is $0</h4></label>
+            {% endif %}
+            <br><br><br>
+            <button type="submit">Next</button>
+        
+        </form>
+
+    </div>
+
+</body>

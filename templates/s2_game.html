@@ -1,0 +1,36 @@
+<style>
+    .content {
+        max-width: 500px;
+        margin: auto;
+    }
+</style>
+
+<body>
+
+    <div class="content">
+<h1 style='text-align: center;'>Scenario 2: Choose your action</h1>
+<h3 style='text-align: center;'>Time: Year {{ year }} Quarter {{ quarter }}</h3>
+<h3 style='text-align: center;'>Your current Cummulative Economic Value (CEV) is ${{ cev }}</h3>
+<h3 style='text-align: center;'>Your current Deductible left is ${{ deductible }}</h3>
+<h2 style='text-align: center; color: red;'>You have been diagnosed with Disease {{ random_disease }}</h2>
+<form method = "post">
+    
+    <input type="radio" id="coi" name="options" value= {{ coi }} required>
+    <label for="coi"><h4 style=' color: green; display: inline;'>Cost of Illness is ${{ coi }}. <br> </h4></label><br>
+    <input type="radio" id="coc" name="options" value={{ coh + 10*time }} required>
+    <label for="coc"><h4 style=' color: green; display: inline;'>Cost of Care is ${{ coh }} and Cost of Time is ${{10 * time}}. <br></h4></label>
+    <br><br>
+    {% if quarter == 2 %}
+    <h2 style='text-align: center; color: red;'>Would you like an annual physical checkup?</h2>
+    <input type="radio" id="yes" name="checkup" value=120 required>
+    <label for="yes"></label><h4 style=' color: green; display: inline;'>Yes. Cost is $120. <br> </h4></label><br>
+    <input type="radio" id="no" name="checkup" value=0 required>
+    <label for="no"></label><h4 style=' color: green; display: inline;'>No. Cost is $0. <br> </h4></label>
+    <br><br>
+    {% endif %}
+
+    <button type="submit">Next</button>
+    
+</form>
+</div>
+</body>
