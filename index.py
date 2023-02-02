@@ -5,10 +5,14 @@ import random
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
+from flask_session import Session
 import uuid
 
 app = Flask(__name__)
-app.secret_key = str(uuid.uuid4())
+# app.secret_key = str(uuid.uuid4())
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
+
 diseases = {
     "A": {"COI": 75, "HC": 80, "Time": 2},
     "B": {"COI": 65, "HC": 65, "Time": 1},
