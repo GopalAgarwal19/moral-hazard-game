@@ -1,19 +1,15 @@
 import json
 import string
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for
 import random
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
-from flask_cors import CORS, cross_origin
-# from flask_session import Session
-import time
 import uuid
 
 app = Flask(__name__)
 app.secret_key = str(uuid.uuid4())
-app.config.update(SESSION_COOKIE_SAMESITE="None", SESSION_COOKIE_SECURE=True)
-CORS(app)
+
 diseases = {
     "A": {"COI": 75, "HC": 80, "Time": 2},
     "B": {"COI": 65, "HC": 65, "Time": 1},
@@ -50,55 +46,29 @@ class LocalVariables:
 
   
 @app.route("/", methods=["GET", "POST"])
-@cross_origin(supports_credentials = True)
 def home():
-    # global userList
     if request.method == "POST":
         currentUser = LocalVariables(cev_s1 = 10000,year_s1 = 1,quarter_s1 = 1,options_selected_s1 = [],alloted_diseases_s1 = [],checkups_s1 = [],cev_s2 = 10000,year_s2 = 1,quarter_s2 = 1,options_selected_s2 = [],alloted_diseases_s2 = [],checkups_s2 = [],deductible = 75,details = {}) 
-        # myuuid = str(uuid.uuid4())
-        # userList[myuuid] = currentUser
-        # print(userList.keys())
-        # print(myuuid)
         currentUser.details["age"] = request.form["age"]
         currentUser.details["gender"] = request.form["gender"]
         currentUser.details["year"] = request.form["year"]
         currentUser.details["course"] = request.form["course"]
-        # session['currentUser'] = json.dumps(currentUser.__dict__)
-        # session['dummy']="abc"
-        time.sleep(0.5)
         return redirect(url_for("s1_ins", data=json.dumps(currentUser.__dict__)))
     return render_template("index.html")
 
 
 @app.route("/s1_ins", methods=["GET", "POST"])
-@cross_origin(supports_credentials = True)
 def s1_ins():
-    # print(userList.keys())
-    # print(myuuid)
     myuuid = request.args['data']
     x = json.loads(myuuid)
     currentUser = LocalVariables(**x)
-    
-    print(x)
     if request.method == "POST":
         return redirect(url_for("s1_game", data=json.dumps(currentUser.__dict__)))
     return render_template("s1_ins.html")
 
 
 @app.route("/s1_game", methods=["GET", "POST"])
-@cross_origin(supports_credentials = True)
 def s1_game():
-    # global userList
-    # print(userList.keys())
-
-    # myuuid = request.args['myuuid']
-    # if myuuid not in userList:
-    #     # print(userList)
-    # currentUser = userList[myuuid]
-    time.sleep(0.5)
-    # dummy=session.get("dummy")
-    # currentUser = json.loads(session.get("currentUser"))
-    # currentUser = LocalVariables(**currentUser)
     myuuid = request.args['data']
     x = json.loads(myuuid)
     currentUser = LocalVariables(**x)
@@ -119,10 +89,8 @@ def s1_game():
             currentUser.quarter_s1 = 1
         else:
             currentUser.quarter_s1 += 1
-        session['currentUser'] = json.dumps(currentUser.__dict__)
-        # time.sleep(0.5)
         
-        if currentUser.year_s1 == 2:
+        if currentUser.year_s1 == 4:
             return redirect(url_for("s2_ins", data=json.dumps(currentUser.__dict__)))
 
         return redirect(url_for("s1_game", data=json.dumps(currentUser.__dict__)))
@@ -140,41 +108,28 @@ def s1_game():
 
 
 @app.route("/s2_ins", methods=["GET", "POST"])
-@cross_origin(supports_credentials = True)
 def s2_ins():
     myuuid = request.args['data']
     x = json.loads(myuuid)
     currentUser = LocalVariables(**x)
-    # print(userList.keys())
-    # myuuid = request.args['myuuid']
     if request.method == "POST":
         return redirect(url_for("s2_game", data=json.dumps(currentUser.__dict__)))
     return render_template("s2_ins.html")
 
 
 @app.route("/s2_game", methods=["GET", "POST"])
-@cross_origin(supports_credentials = True)
 def s2_game():
-    # global userList
-    # print(userList.keys())
-    # time.sleep(0.5)
     myuuid = request.args['data']
     x = json.loads(myuuid)
     currentUser = LocalVariables(**x)
-    # myuuid = request.args['myuuid']
-    # currentUser = userList[myuuid]
-    # currentUser = json.loads(session.get("currentUser"))
-    # currentUser = LocalVariables(**currentUser)
     
     random_disease = chr(random.randint(ord("A"), ord("L")))
     currentUser.alloted_diseases_s2.append(random_disease)
 
     if request.method == "POST":
-        # print(request.form["options"])
         currentUser.options_selected_s2.append(request.form["options"])
         os = int(request.form["options"])
         if currentUser.quarter_s2 == 2:
-            # print(request.form["checkup"])
             os += int(request.form["checkup"])
             currentUser.checkups_s2.append(int(request.form["checkup"]))
         if currentUser.deductible >= os:
@@ -192,8 +147,7 @@ def s2_game():
             currentUser.deductible = 75
         else:
             currentUser.quarter_s2 += 1
-        session['currentUser'] = json.dumps(currentUser.__dict__)
-        if currentUser.year_s2 == 2:
+        if currentUser.year_s2 == 4:
             return redirect(url_for("thank", data=json.dumps(currentUser.__dict__)))
         return redirect(url_for("s2_game", data=json.dumps(currentUser.__dict__)))
 
@@ -211,25 +165,15 @@ def s2_game():
 
 
 @app.route("/thank", methods=["GET", "POST"])
-@cross_origin(supports_credentials = True)
 def thank():
     myuuid = request.args['data']
     x = json.loads(myuuid)
     currentUser = LocalVariables(**x)
-    # global userList
-    # print(userList.keys())
-    # myuuid = request.args['myuuid']
-    # currentUser = userList[myuuid]
-    # time.sleep(0.5)
-    # currentUser = json.loads(session.get("currentUser"))
-    # currentUser = LocalVariables(**currentUser)
     try:
         app = firebase_admin.get_app()
     except ValueError as e:
         cred = credentials.Certificate('moral-hazard-game-firebase-adminsdk-1g1hk-0a4993c229.json')
         firebase_admin.initialize_app(cred)
-    # cred = credentials.Certificate('moral-hazard-game-firebase-adminsdk-1g1hk-0a4993c229.json')
-    # firebase_admin.initialize_app(cred)
     db = firestore.client()
     doc_ref = db.collection("tutorial").document(''.join(random.choices(string.ascii_letters, k=15)))
     doc_ref.set({
@@ -246,5 +190,4 @@ def thank():
                 "S2 checkups": currentUser.checkups_s2,
                 "S2 final CEV": currentUser.cev_s2,
     })
-    session.clear()
     return render_template("thank.html")
