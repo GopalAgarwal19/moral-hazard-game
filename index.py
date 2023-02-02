@@ -63,22 +63,25 @@ def home():
         currentUser.details["gender"] = request.form["gender"]
         currentUser.details["year"] = request.form["year"]
         currentUser.details["course"] = request.form["course"]
-        session['currentUser'] = json.dumps(currentUser.__dict__)
-        session['dummy']="abc"
+        # session['currentUser'] = json.dumps(currentUser.__dict__)
+        # session['dummy']="abc"
         time.sleep(0.5)
-        return redirect(url_for("s1_ins"))
+        return redirect(url_for("s1_ins", data=json.dumps(currentUser.__dict__)))
     return render_template("index.html")
 
 
 @app.route("/s1_ins", methods=["GET", "POST"])
 @cross_origin(supports_credentials = True)
 def s1_ins():
-    # myuuid = request.args['myuuid']
     # print(userList.keys())
     # print(myuuid)
+    myuuid = request.args['data']
+    x = json.loads(myuuid)
+    currentUser = LocalVariables(**x)
     
+    print(x)
     if request.method == "POST":
-        return redirect(url_for("s1_game"))
+        return redirect(url_for("s1_game", data=json.dumps(currentUser.__dict__)))
     return render_template("s1_ins.html")
 
 
@@ -93,9 +96,12 @@ def s1_game():
     #     # print(userList)
     # currentUser = userList[myuuid]
     time.sleep(0.5)
-    dummy=session.get("dummy")
-    currentUser = json.loads(session.get("currentUser"))
-    currentUser = LocalVariables(**currentUser)
+    # dummy=session.get("dummy")
+    # currentUser = json.loads(session.get("currentUser"))
+    # currentUser = LocalVariables(**currentUser)
+    myuuid = request.args['data']
+    x = json.loads(myuuid)
+    currentUser = LocalVariables(**x)
     
     random_disease = chr(random.randint(ord("A"), ord("L")))
     currentUser.alloted_diseases_s1.append(random_disease)
@@ -117,9 +123,9 @@ def s1_game():
         # time.sleep(0.5)
         
         if currentUser.year_s1 == 2:
-            return redirect(url_for("s2_ins"))
+            return redirect(url_for("s2_ins", data=json.dumps(currentUser.__dict__)))
 
-        return redirect(url_for("s1_game"))
+        return redirect(url_for("s1_game", data=json.dumps(currentUser.__dict__)))
 
     return render_template(
         "s1_game.html",
@@ -136,11 +142,13 @@ def s1_game():
 @app.route("/s2_ins", methods=["GET", "POST"])
 @cross_origin(supports_credentials = True)
 def s2_ins():
-    
+    myuuid = request.args['data']
+    x = json.loads(myuuid)
+    currentUser = LocalVariables(**x)
     # print(userList.keys())
     # myuuid = request.args['myuuid']
     if request.method == "POST":
-        return redirect(url_for("s2_game"))
+        return redirect(url_for("s2_game", data=json.dumps(currentUser.__dict__)))
     return render_template("s2_ins.html")
 
 
@@ -149,12 +157,14 @@ def s2_ins():
 def s2_game():
     # global userList
     # print(userList.keys())
-    time.sleep(0.5)
-    
+    # time.sleep(0.5)
+    myuuid = request.args['data']
+    x = json.loads(myuuid)
+    currentUser = LocalVariables(**x)
     # myuuid = request.args['myuuid']
     # currentUser = userList[myuuid]
-    currentUser = json.loads(session.get("currentUser"))
-    currentUser = LocalVariables(**currentUser)
+    # currentUser = json.loads(session.get("currentUser"))
+    # currentUser = LocalVariables(**currentUser)
     
     random_disease = chr(random.randint(ord("A"), ord("L")))
     currentUser.alloted_diseases_s2.append(random_disease)
@@ -184,8 +194,8 @@ def s2_game():
             currentUser.quarter_s2 += 1
         session['currentUser'] = json.dumps(currentUser.__dict__)
         if currentUser.year_s2 == 2:
-            return redirect(url_for("thank"))
-        return redirect(url_for("s2_game"))
+            return redirect(url_for("thank", data=json.dumps(currentUser.__dict__)))
+        return redirect(url_for("s2_game", data=json.dumps(currentUser.__dict__)))
 
     return render_template(
         "s2_game.html",
@@ -203,13 +213,16 @@ def s2_game():
 @app.route("/thank", methods=["GET", "POST"])
 @cross_origin(supports_credentials = True)
 def thank():
+    myuuid = request.args['data']
+    x = json.loads(myuuid)
+    currentUser = LocalVariables(**x)
     # global userList
     # print(userList.keys())
     # myuuid = request.args['myuuid']
     # currentUser = userList[myuuid]
-    time.sleep(0.5)
-    currentUser = json.loads(session.get("currentUser"))
-    currentUser = LocalVariables(**currentUser)
+    # time.sleep(0.5)
+    # currentUser = json.loads(session.get("currentUser"))
+    # currentUser = LocalVariables(**currentUser)
     try:
         app = firebase_admin.get_app()
     except ValueError as e:
