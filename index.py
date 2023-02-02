@@ -49,6 +49,7 @@ def home():
         currentUser = LocalVariables(cev_s1 = 10000,year_s1 = 1,quarter_s1 = 1,options_selected_s1 = [],alloted_diseases_s1 = [],checkups_s1 = [],cev_s2 = 10000,year_s2 = 1,quarter_s2 = 1,options_selected_s2 = [],alloted_diseases_s2 = [],checkups_s2 = [],deductible = 75,details = {}) 
         myuuid = str(uuid.uuid4())
         userList[myuuid] = currentUser
+        print(userList.keys())
         # print(myuuid)
         currentUser.details["age"] = request.form["age"]
         currentUser.details["gender"] = request.form["gender"]
@@ -61,6 +62,7 @@ def home():
 @app.route("/s1_ins", methods=["GET", "POST"])
 def s1_ins():
     myuuid = request.args['myuuid']
+    print(userList.keys())
     # print(myuuid)
     if request.method == "POST":
         return redirect(url_for("s1_game", myuuid = myuuid))
@@ -70,7 +72,7 @@ def s1_ins():
 @app.route("/s1_game", methods=["GET", "POST"])
 def s1_game():
     global userList
-    
+    print(userList.keys())
 
     myuuid = request.args['myuuid']
     if myuuid not in userList:
@@ -116,6 +118,8 @@ def s1_game():
 
 @app.route("/s2_ins", methods=["GET", "POST"])
 def s2_ins():
+    
+    print(userList.keys())
     myuuid = request.args['myuuid']
     if request.method == "POST":
         return redirect(url_for("s2_game", myuuid = myuuid))
@@ -125,6 +129,8 @@ def s2_ins():
 @app.route("/s2_game", methods=["GET", "POST"])
 def s2_game():
     global userList
+    print(userList.keys())
+    
     myuuid = request.args['myuuid']
     currentUser = userList[myuuid]
     
