@@ -70,9 +70,11 @@ def s1_ins():
 @app.route("/s1_game", methods=["GET", "POST"])
 def s1_game():
     global userList
+    
+
+    myuuid = request.args['myuuid']
     if myuuid not in userList:
         print(userList)
-    myuuid = request.args['myuuid']
     currentUser = userList[myuuid]
     
         
