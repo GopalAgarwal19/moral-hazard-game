@@ -5,14 +5,15 @@ import random
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
+from flask_cors import CORS, cross_origin
 # from flask_session import Session
 import time
 import uuid
 
 app = Flask(__name__)
 app.secret_key = str(uuid.uuid4())
-
-
+app.config.update(SESSION_COOKIE_SAMESITE="None", SESSION_COOKIE_SECURE=True)
+CORS(app)
 diseases = {
     "A": {"COI": 75, "HC": 80, "Time": 2},
     "B": {"COI": 65, "HC": 65, "Time": 1},
@@ -49,6 +50,7 @@ class LocalVariables:
 
   
 @app.route("/", methods=["GET", "POST"])
+@cross_origin(supports_credentials = True)
 def home():
     # global userList
     if request.method == "POST":
@@ -68,6 +70,7 @@ def home():
 
 
 @app.route("/s1_ins", methods=["GET", "POST"])
+@cross_origin(supports_credentials = True)
 def s1_ins():
     # myuuid = request.args['myuuid']
     # print(userList.keys())
@@ -79,6 +82,7 @@ def s1_ins():
 
 
 @app.route("/s1_game", methods=["GET", "POST"])
+@cross_origin(supports_credentials = True)
 def s1_game():
     # global userList
     # print(userList.keys())
@@ -129,6 +133,7 @@ def s1_game():
 
 
 @app.route("/s2_ins", methods=["GET", "POST"])
+@cross_origin(supports_credentials = True)
 def s2_ins():
     
     # print(userList.keys())
@@ -139,6 +144,7 @@ def s2_ins():
 
 
 @app.route("/s2_game", methods=["GET", "POST"])
+@cross_origin(supports_credentials = True)
 def s2_game():
     # global userList
     # print(userList.keys())
@@ -194,6 +200,7 @@ def s2_game():
 
 
 @app.route("/thank", methods=["GET", "POST"])
+@cross_origin(supports_credentials = True)
 def thank():
     # global userList
     # print(userList.keys())
