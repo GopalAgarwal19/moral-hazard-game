@@ -49,7 +49,7 @@ def home():
         currentUser = LocalVariables(cev_s1 = 10000,year_s1 = 1,quarter_s1 = 1,options_selected_s1 = [],alloted_diseases_s1 = [],checkups_s1 = [],cev_s2 = 10000,year_s2 = 1,quarter_s2 = 1,options_selected_s2 = [],alloted_diseases_s2 = [],checkups_s2 = [],deductible = 75,details = {}) 
         myuuid = str(uuid.uuid4())
         userList[myuuid] = currentUser
-        print(myuuid)
+        # print(myuuid)
         currentUser.details["age"] = request.form["age"]
         currentUser.details["gender"] = request.form["gender"]
         currentUser.details["year"] = request.form["year"]
@@ -61,7 +61,7 @@ def home():
 @app.route("/s1_ins", methods=["GET", "POST"])
 def s1_ins():
     myuuid = request.args['myuuid']
-    print(myuuid)
+    # print(myuuid)
     if request.method == "POST":
         return redirect(url_for("s1_game", myuuid = myuuid))
     return render_template("s1_ins.html")
@@ -70,21 +70,22 @@ def s1_ins():
 @app.route("/s1_game", methods=["GET", "POST"])
 def s1_game():
     global userList
-    try:
-        myuuid = request.args['myuuid']
-        currentUser = userList[myuuid]
-    except:
+    if myuuid not in userList:
         print(userList)
+    myuuid = request.args['myuuid']
+    currentUser = userList[myuuid]
+    
+        
     random_disease = chr(random.randint(ord("A"), ord("L")))
     currentUser.alloted_diseases_s1.append(random_disease)
     if request.method == "POST":
-        print(request.form["options"])
+        # print(request.form["options"])
         currentUser.options_selected_s1.append(request.form["options"])
         currentUser.cev_s1 -= int(request.form["options"])
         currentUser.cev_s1 += 3000
 
         if currentUser.quarter_s1 == 2:
-            print(request.form["checkup"])
+            # print(request.form["checkup"])
             currentUser.cev_s1 -= int(request.form["checkup"])
             currentUser.checkups_s1.append(int(request.form["checkup"]))
 
@@ -129,11 +130,11 @@ def s2_game():
     currentUser.alloted_diseases_s2.append(random_disease)
 
     if request.method == "POST":
-        print(request.form["options"])
+        # print(request.form["options"])
         currentUser.options_selected_s2.append(request.form["options"])
         os = int(request.form["options"])
         if currentUser.quarter_s2 == 2:
-            print(request.form["checkup"])
+            # print(request.form["checkup"])
             os += int(request.form["checkup"])
             currentUser.checkups_s2.append(int(request.form["checkup"]))
         if currentUser.deductible >= os:
