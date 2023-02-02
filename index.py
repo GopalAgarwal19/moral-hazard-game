@@ -181,6 +181,7 @@ def s2_game():
 @app.route("/thank", methods=["GET", "POST"])
 def thank():
     global userList
+    print(userList.keys())
     myuuid = request.args['myuuid']
     currentUser = userList[myuuid]
     try:
