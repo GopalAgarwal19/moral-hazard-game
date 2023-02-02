@@ -1,4 +1,6 @@
-from flask import Flask, render_template, request, redirect, url_for
+import json
+import string
+from flask import Flask, render_template, request, redirect, url_for, session
 import random
 import firebase_admin
 from firebase_admin import credentials
@@ -6,7 +8,7 @@ from firebase_admin import firestore
 import uuid
 
 app = Flask(__name__)
-
+app.secret_key = str(uuid.uuid4())
 diseases = {
     "A": {"COI": 75, "HC": 80, "Time": 2},
     "B": {"COI": 65, "HC": 65, "Time": 1},
@@ -22,8 +24,7 @@ diseases = {
     "L": {"COI": 40, "HC": 25, "Time": 1},
 }
 
-print("Restarting server")
-userList = {}
+
 
 class LocalVariables:
      def __init__(self, cev_s1, year_s1, quarter_s1, options_selected_s1, alloted_diseases_s1, checkups_s1, cev_s2, year_s2, quarter_s2, options_selected_s2, alloted_diseases_s2, checkups_s2, deductible, details):
@@ -45,52 +46,54 @@ class LocalVariables:
   
 @app.route("/", methods=["GET", "POST"])
 def home():
-    global userList
+    # global userList
     if request.method == "POST":
         currentUser = LocalVariables(cev_s1 = 10000,year_s1 = 1,quarter_s1 = 1,options_selected_s1 = [],alloted_diseases_s1 = [],checkups_s1 = [],cev_s2 = 10000,year_s2 = 1,quarter_s2 = 1,options_selected_s2 = [],alloted_diseases_s2 = [],checkups_s2 = [],deductible = 75,details = {}) 
-        myuuid = str(uuid.uuid4())
-        userList[myuuid] = currentUser
-        print(userList.keys())
+        # myuuid = str(uuid.uuid4())
+        # userList[myuuid] = currentUser
+        # print(userList.keys())
         # print(myuuid)
         currentUser.details["age"] = request.form["age"]
         currentUser.details["gender"] = request.form["gender"]
         currentUser.details["year"] = request.form["year"]
         currentUser.details["course"] = request.form["course"]
-        return redirect(url_for("s1_ins", myuuid = myuuid))
+        session['currentUser'] = json.dumps(currentUser.__dict__)
+        return redirect(url_for("s1_ins"))
     return render_template("index.html")
 
 
 @app.route("/s1_ins", methods=["GET", "POST"])
 def s1_ins():
-    myuuid = request.args['myuuid']
-    print(userList.keys())
+    # myuuid = request.args['myuuid']
+    # print(userList.keys())
     # print(myuuid)
+    
     if request.method == "POST":
-        return redirect(url_for("s1_game", myuuid = myuuid))
+        return redirect(url_for("s1_game"))
     return render_template("s1_ins.html")
 
 
 @app.route("/s1_game", methods=["GET", "POST"])
 def s1_game():
-    global userList
-    print(userList.keys())
+    # global userList
+    # print(userList.keys())
 
-    myuuid = request.args['myuuid']
-    if myuuid not in userList:
-        print(userList)
-    currentUser = userList[myuuid]
+    # myuuid = request.args['myuuid']
+    # if myuuid not in userList:
+    #     # print(userList)
+    # currentUser = userList[myuuid]
     
-        
+    currentUser = json.loads(session.get("currentUser"))
+    currentUser = LocalVariables(**currentUser)
+    
     random_disease = chr(random.randint(ord("A"), ord("L")))
     currentUser.alloted_diseases_s1.append(random_disease)
     if request.method == "POST":
-        # print(request.form["options"])
         currentUser.options_selected_s1.append(request.form["options"])
         currentUser.cev_s1 -= int(request.form["options"])
         currentUser.cev_s1 += 3000
 
         if currentUser.quarter_s1 == 2:
-            # print(request.form["checkup"])
             currentUser.cev_s1 -= int(request.form["checkup"])
             currentUser.checkups_s1.append(int(request.form["checkup"]))
 
@@ -99,11 +102,11 @@ def s1_game():
             currentUser.quarter_s1 = 1
         else:
             currentUser.quarter_s1 += 1
-
+        session['currentUser'] = json.dumps(currentUser.__dict__)
         if currentUser.year_s1 == 2:
-            return redirect(url_for("s2_ins", myuuid = myuuid))
+            return redirect(url_for("s2_ins"))
 
-        return redirect(url_for("s1_game", myuuid = myuuid))
+        return redirect(url_for("s1_game"))
 
     return render_template(
         "s1_game.html",
@@ -120,20 +123,22 @@ def s1_game():
 @app.route("/s2_ins", methods=["GET", "POST"])
 def s2_ins():
     
-    print(userList.keys())
-    myuuid = request.args['myuuid']
+    # print(userList.keys())
+    # myuuid = request.args['myuuid']
     if request.method == "POST":
-        return redirect(url_for("s2_game", myuuid = myuuid))
+        return redirect(url_for("s2_game"))
     return render_template("s2_ins.html")
 
 
 @app.route("/s2_game", methods=["GET", "POST"])
 def s2_game():
-    global userList
-    print(userList.keys())
+    # global userList
+    # print(userList.keys())
     
-    myuuid = request.args['myuuid']
-    currentUser = userList[myuuid]
+    # myuuid = request.args['myuuid']
+    # currentUser = userList[myuuid]
+    currentUser = json.loads(session.get("currentUser"))
+    currentUser = LocalVariables(**currentUser)
     
     random_disease = chr(random.randint(ord("A"), ord("L")))
     currentUser.alloted_diseases_s2.append(random_disease)
@@ -161,10 +166,11 @@ def s2_game():
             currentUser.deductible = 75
         else:
             currentUser.quarter_s2 += 1
-    
+        session['currentUser'] = json.dumps(currentUser.__dict__)
+
         if currentUser.year_s2 == 2:
-            return redirect(url_for("thank", myuuid = myuuid))
-        return redirect(url_for("s2_game", myuuid = myuuid))
+            return redirect(url_for("thank"))
+        return redirect(url_for("s2_game"))
 
     return render_template(
         "s2_game.html",
@@ -181,10 +187,12 @@ def s2_game():
 
 @app.route("/thank", methods=["GET", "POST"])
 def thank():
-    global userList
-    print(userList.keys())
-    myuuid = request.args['myuuid']
-    currentUser = userList[myuuid]
+    # global userList
+    # print(userList.keys())
+    # myuuid = request.args['myuuid']
+    # currentUser = userList[myuuid]
+    currentUser = json.loads(session.get("currentUser"))
+    currentUser = LocalVariables(**currentUser)
     try:
         app = firebase_admin.get_app()
     except ValueError as e:
@@ -193,28 +201,20 @@ def thank():
     # cred = credentials.Certificate('moral-hazard-game-firebase-adminsdk-1g1hk-0a4993c229.json')
     # firebase_admin.initialize_app(cred)
     db = firestore.client()
-    doc_ref = db.collection("tutorial").document(myuuid)
+    doc_ref = db.collection("tutorial").document(''.join(random.choices(string.ascii_letters, k=5)))
     doc_ref.set({
         "Age": currentUser.details["age"],
                 "Gender": currentUser.details["gender"],
                 "Year": currentUser.details["year"],
                 "Course": currentUser.details["course"],
-                "S1 diseases": [
-                    currentUser.alloted_diseases_s1[i]
-                    for i in range(len(currentUser.alloted_diseases_s1))
-                    if i % 2 == 0
-                ],
+                "S1 diseases": currentUser.alloted_diseases_s1,
                 "S1 options": currentUser.options_selected_s1,
                 "S1 checkups": currentUser.checkups_s1,
                 "S1 final CEV": currentUser.cev_s1,
-                "S2 diseases": [
-                    currentUser.alloted_diseases_s2[i]
-                    for i in range(len(currentUser.alloted_diseases_s2))
-                    if i % 2 == 0
-                ],
+                "S2 diseases": currentUser.alloted_diseases_s2,
                 "S2 options": currentUser.options_selected_s2,
                 "S2 checkups": currentUser.checkups_s2,
                 "S2 final CEV": currentUser.cev_s2,
     })
-    
+    session.clear()
     return render_template("thank.html")
