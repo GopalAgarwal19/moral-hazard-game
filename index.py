@@ -22,25 +22,56 @@ diseases = {
     "L": {"COI": 40, "HC": 25, "Time": 1},
 }
 
-cev_s1 = 10000
-year_s1 = 1
-quarter_s1 = 1
-options_selected_s1 = []
-alloted_diseases_s1 = []
-checkups_s1 = []
+cev_s1 = 0
+year_s1 = 0
+quarter_s1 = 0
+options_selected_s1  = 0
+alloted_diseases_s1  = 0
+checkups_s1  = 0
+cev_s2 = 0
+year_s2 = 0
+quarter_s2 = 0
+options_selected_s2  = 0
+alloted_diseases_s2  = 0
+checkups_s2  = 0
+deductible  = 0
+details  = 0
 
-cev_s2 = 10000
-year_s2 = 1
-quarter_s2 = 1
-options_selected_s2 = []
-alloted_diseases_s2 = []
-checkups_s2 = []
-deductible = 75
-details = {}
+def set_values():
+    global cev_s1
+    global year_s1
+    global quarter_s1
+    global options_selected_s1 
+    global alloted_diseases_s1 
+    global checkups_s1 
+    global cev_s2
+    global year_s2
+    global quarter_s2
+    global options_selected_s2 
+    global alloted_diseases_s2 
+    global checkups_s2 
+    global deductible 
+    global details 
 
+    cev_s1 = 10000
+    year_s1 = 1
+    quarter_s1 = 1
+    options_selected_s1 = []
+    alloted_diseases_s1 = []
+    checkups_s1 = []
 
+    cev_s2 = 10000
+    year_s2 = 1
+    quarter_s2 = 1
+    options_selected_s2 = []
+    alloted_diseases_s2 = []
+    checkups_s2 = []
+    deductible = 75
+    details = {}
+    
 @app.route("/", methods=["GET", "POST"])
 def home():
+    set_values()
     global details
     if request.method == "POST":
         details["age"] = request.form["age"]
@@ -87,7 +118,7 @@ def s1_game():
         else:
             quarter_s1 += 1
 
-        if year_s1 == 2:
+        if year_s1 == 4:
             return redirect("/s2_ins")
 
         return redirect("/s1_game")
@@ -147,7 +178,7 @@ def s2_game():
         else:
             quarter_s2 += 1
     
-        if year_s2 == 2:
+        if year_s2 == 4:
             return redirect("/thank")
         return redirect("/s2_game")
 
