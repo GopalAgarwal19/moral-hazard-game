@@ -87,7 +87,7 @@ def s1_game():
         else:
             quarter_s1 += 1
 
-        if year_s1 == 4:
+        if year_s1 == 2:
             return redirect("/s2_ins")
 
         return redirect("/s1_game")
@@ -147,7 +147,7 @@ def s2_game():
         else:
             quarter_s2 += 1
     
-        if year_s2 == 4:
+        if year_s2 == 2:
             return redirect("/thank")
         return redirect("/s2_game")
 
@@ -167,8 +167,13 @@ def s2_game():
 @app.route("/thank", methods=["GET", "POST"])
 def thank():
     global details
-    cred = credentials.Certificate('moral-hazard-game-firebase-adminsdk-1g1hk-0a4993c229.json')
-    firebase_admin.initialize_app(cred)
+    try:
+        app = firebase_admin.get_app()
+    except ValueError as e:
+        cred = credentials.Certificate('moral-hazard-game-firebase-adminsdk-1g1hk-0a4993c229.json')
+        firebase_admin.initialize_app(cred)
+    # cred = credentials.Certificate('moral-hazard-game-firebase-adminsdk-1g1hk-0a4993c229.json')
+    # firebase_admin.initialize_app(cred)
     db = firestore.client()
     doc_ref = db.collection("tutorial").document(''.join(random.choices(string.ascii_letters, k=15)))
     doc_ref.set({
