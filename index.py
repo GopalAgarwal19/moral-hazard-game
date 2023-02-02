@@ -22,6 +22,7 @@ diseases = {
     "L": {"COI": 40, "HC": 25, "Time": 1},
 }
 
+print("Restarting server")
 userList = {}
 
 class LocalVariables:
