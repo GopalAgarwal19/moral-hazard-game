@@ -6,6 +6,7 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 # from flask_session import Session
+import time
 import uuid
 
 app = Flask(__name__)
@@ -61,6 +62,7 @@ def home():
         currentUser.details["year"] = request.form["year"]
         currentUser.details["course"] = request.form["course"]
         session['currentUser'] = json.dumps(currentUser.__dict__)
+        time.sleep(0.5)
         return redirect(url_for("s1_ins"))
     return render_template("index.html")
 
@@ -85,6 +87,7 @@ def s1_game():
     # if myuuid not in userList:
     #     # print(userList)
     # currentUser = userList[myuuid]
+    time.sleep(0.5)
     
     currentUser = json.loads(session.get("currentUser"))
     currentUser = LocalVariables(**currentUser)
@@ -106,6 +109,8 @@ def s1_game():
         else:
             currentUser.quarter_s1 += 1
         session['currentUser'] = json.dumps(currentUser.__dict__)
+        # time.sleep(0.5)
+        
         if currentUser.year_s1 == 2:
             return redirect(url_for("s2_ins"))
 
@@ -137,6 +142,7 @@ def s2_ins():
 def s2_game():
     # global userList
     # print(userList.keys())
+    time.sleep(0.5)
     
     # myuuid = request.args['myuuid']
     # currentUser = userList[myuuid]
@@ -170,7 +176,6 @@ def s2_game():
         else:
             currentUser.quarter_s2 += 1
         session['currentUser'] = json.dumps(currentUser.__dict__)
-
         if currentUser.year_s2 == 2:
             return redirect(url_for("thank"))
         return redirect(url_for("s2_game"))
@@ -194,6 +199,7 @@ def thank():
     # print(userList.keys())
     # myuuid = request.args['myuuid']
     # currentUser = userList[myuuid]
+    time.sleep(0.5)
     currentUser = json.loads(session.get("currentUser"))
     currentUser = LocalVariables(**currentUser)
     try:
