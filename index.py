@@ -64,6 +64,7 @@ def home():
         currentUser.details["year"] = request.form["year"]
         currentUser.details["course"] = request.form["course"]
         session['currentUser'] = json.dumps(currentUser.__dict__)
+        session['dummy']="abc"
         time.sleep(0.5)
         return redirect(url_for("s1_ins"))
     return render_template("index.html")
@@ -92,7 +93,7 @@ def s1_game():
     #     # print(userList)
     # currentUser = userList[myuuid]
     time.sleep(0.5)
-    
+    dummy=session.get("dummy")
     currentUser = json.loads(session.get("currentUser"))
     currentUser = LocalVariables(**currentUser)
     
