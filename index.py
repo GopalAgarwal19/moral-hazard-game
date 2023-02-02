@@ -10,7 +10,7 @@ import uuid
 
 app = Flask(__name__)
 # app.secret_key = str(uuid.uuid4())
-app.config["SESSION_TYPE"] = "filesystem"
+# app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 diseases = {
