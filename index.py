@@ -201,7 +201,7 @@ def thank():
     # cred = credentials.Certificate('moral-hazard-game-firebase-adminsdk-1g1hk-0a4993c229.json')
     # firebase_admin.initialize_app(cred)
     db = firestore.client()
-    doc_ref = db.collection("tutorial").document(''.join(random.choices(string.ascii_letters, k=5)))
+    doc_ref = db.collection("tutorial").document(''.join(random.choices(string.ascii_letters, k=15)))
     doc_ref.set({
         "Age": currentUser.details["age"],
                 "Gender": currentUser.details["gender"],
